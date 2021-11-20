@@ -13,17 +13,41 @@ export class BookService {
 
   constructor(private http: HttpClient) { }
 
+  //ADD
+  addBook(book: Book): Observable<Book> {
+    return this.http.post<Book>(this.dataUri, book)
+      .pipe(
+        catchError(this.handleError)
+      )
+  }
 
+  //UPDATE
+  updateBook(id: string, book: Book): Observable<Book> {
+    console.log('subscribing to update' + id);
+    let bookURI: string = this.dataUri + '/' + id;
+    return this.http.put<Book>(bookURI, book)
+      .pipe(
+        catchError(this.handleError)
+      )
+  }
 
+  //GET BOOKS
   getBooks(): Observable<Book[]>{
-
     console.log('get Books called');
-
     return this.http.get<Book[]>(`${this.dataUri}?limit=5`)
     .pipe(
       catchError(this.handleError)
     )
   }
+
+  /** DELETE: delete the book from the server */
+deleteBook(id: string): Observable<unknown> {
+  const url = `${this.dataUri}/${id}`; // DELETE 
+  return this.http.delete(url)
+    .pipe(
+      catchError(this.handleError)
+    );
+}
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
